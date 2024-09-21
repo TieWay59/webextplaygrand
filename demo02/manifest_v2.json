@@ -1,13 +1,18 @@
 {
-    "name" : "demo02",
-    "version" : "1.0",
-    "description" : "demo02",
-    "permissions": [],
+    "name": "demo02",
+    "version": "1.0",
+    "description": "demo02",
+    "permissions": [
+        "history"
+    ],
     "content_scripts": [
         {
-            "matches": ["*://*.example.com/*"],
+            "matches": [
+                "*://*.example.com/*"
+            ],
             "js": [
-                "demo02.js", "run_wasm.js"
+                "demo02.js",
+                "run_wasm.js"
             ]
         }
     ],

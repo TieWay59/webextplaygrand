@@ -1,19 +1,25 @@
 {
-    "name" : "demo02",
-    "version" : "1.0",
-    "description" : "demo02",
-    "permissions": [],
-    "content_scripts": [
+    "name": "demo02",
+    "version": "1.0",
+    "description": "demo02",
+    "permissions": [
+        "history"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
         {
-            "matches": ["*://*.example.com/*"],
-            "js": [
-                "demo02.js", "run_wasm.js"
+            "resources": [
+                "demo02_bg.wasm"
+            ],
+            "matches": [
+                "*://*.example.com/*"
             ]
         }
     ],
-    "web_accessible_resources": [{
-        "resources": ["demo02_bg.wasm"],
-        "matches": ["*://*.example.com/*"]
-    }],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
     "manifest_version": 3
 }
