@@ -1,25 +1,32 @@
 #!/bin/sh
+# shellcheck disable=SC1017
 
-command -v cargo >/dev/null 2>&1 || { echo >&2 "Installing cargo..."; curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh; }
-command -v wasm-pack >/dev/null 2>&1 || { echo >&2 "Installing wasm-pack..."; cargo install wasm-pack; }
+command -v cargo >/dev/null 2>&1 || {
+  echo >&2 "Installing cargo..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+command -v wasm-pack >/dev/null 2>&1 || {
+  echo >&2 "Installing wasm-pack..."
+  cargo install wasm-pack
+}
 
 rm -rf pkg
 
 # Find value of argument --manifest-version
 for arg in "$@"; do
   case "$arg" in
-    --manifest-version=*)
-      manifest_version="${arg#*=}"
-      ;;
+  --manifest-version=*)
+    manifest_version="${arg#*=}"
+    ;;
   esac
 done
 
 # Find whether release was passed
 for arg in "$@"; do
   case "$arg" in
-    --release)
-      release=true
-      ;;
+  --release)
+    release=true
+    ;;
   esac
 done
 
@@ -33,11 +40,12 @@ fi
 # Copy manifest.json to pkg
 if [ "$manifest_version" = "v3" ] || [ "$manifest_version" = "3" ]; then
   cp manifest_v3.json pkg/manifest.json
-else if [ "$manifest_version" = "v2" ] || [ "$manifest_version" = "2" ]; then
-  cp manifest_v2.json pkg/manifest.json
 else
-  echo "Packaging with manifest version v2. Pass --manifest-version=v3 to package with manifest version 3."
-  cp manifest_v2.json pkg/manifest.json
+  if [ "$manifest_version" = "v2" ] || [ "$manifest_version" = "2" ]; then
+    cp manifest_v2.json pkg/manifest.json
+  else
+    echo "Packaging with manifest version v2. Pass --manifest-version=v3 to package with manifest version 3."
+    cp manifest_v2.json pkg/manifest.json
   fi
 fi
 
@@ -49,4 +57,4 @@ async function run() {
 }
 
 run();
-" >> pkg/run_wasm.js
+" >>pkg/run_wasm.js
