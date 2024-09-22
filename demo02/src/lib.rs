@@ -59,6 +59,25 @@ pub async fn tryout_history_example_1() {
     }
 }
 
+/// example for getting `milliseconds since the epoch` from rust
+#[wasm_bindgen]
+pub fn get_raw_js_timestamp() -> i64 {
+    let now = js_sys::Date::now();
+    now as i64
+}
+
+/// 我有点好奇能不能用 chrono 库获取时间功能？答案可以的，需要 chrono 开启 feature `wasm-bindgen`
+#[wasm_bindgen]
+pub fn get_chrono_timestamp() -> i64 {
+    let now = chrono::Local::now();
+
+    // 用 chrono 获取 两个月前是时间戳：
+    let two_months_ago = now - chrono::Duration::days(60);
+    log!("two_months_ago: {:?}", two_months_ago.timestamp_millis());
+
+    now.timestamp_millis()
+}
+
 /// A simple function that logs a message to the console.
 /// integrated test by `wasm_bindgen.say_hello();`
 #[wasm_bindgen]
