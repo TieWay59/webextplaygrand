@@ -1,7 +1,14 @@
 use std::borrow::Cow;
 
+use js_sys::{Date, Function, Object, Reflect};
 use wasm_bindgen::prelude::*;
 use web_sys::*;
+
+use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen_futures::JsFuture;
+use web_extensions::history;
+use web_sys::console;
 
 #[macro_use]
 mod util;
@@ -83,4 +90,28 @@ pub fn get_chrono_timestamp() -> i64 {
 #[wasm_bindgen]
 pub fn say_hello() {
     log!("Hello from Rust!");
+}
+
+#[wasm_bindgen]
+pub async fn build_typed_url_list() {
+    let milliseconds_per_week = 1000 * 60 * 60 * 24 * 7;
+    let one_week_ago = Date::now() - milliseconds_per_week as f64;
+
+    let history_items_promise = history::search(&history::Query {
+        start_time: Some(one_week_ago as i64),
+        max_results: Some(100),
+        ..Default::default()
+    })
+    .await
+    .unwrap();
+
+    for item in history_items_promise {
+        let url = item.url.unwrap_or_default();
+        let title = item.title.unwrap_or_default();
+        let visit_count = item.visit_count.unwrap_or_default();
+        let last_visit_time = item.last_visit_time.unwrap_or_default();
+
+        // WIP: not get visit function available.
+        // waiting for https://github.com/web-extensions-rs/web-extensions/issues/16
+    }
 }
